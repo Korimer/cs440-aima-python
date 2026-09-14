@@ -95,6 +95,58 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    #tuple (x,y)
+    #print("Start:", problem.getStartState())
+    #boolean
+    #print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    #Triple (nextState, action, cost)
+    #print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    #table agent code from project0
+    #table agent used breadth first logic to build the precept table 
+    #util.Queue() constructor builds empty queue
+    #buffered queue from table not needed
+    #vacuum agent history was the table of agent's percepts and actions
+    #vacuum agent used breadth first logic to build the precept table
+    #the search agent computes one path for the actual start state, using a goal test to know when to stop.
+
+    """def buildTable(depth):
+  table = {}
+  histories = []
+
+  #for each location in the grid space...
+  for location in LOC:
+    for status in ['Clean','Dirty']:
+    #create percept
+      percept = (location, status)
+    #create history
+      history = (percept,)
+    #create a starting history
+      histories.append(history)
+
+    #determine action associated w/ history
+
+
+    #add history/action to table
+  for i in range(depth):    #made depth of table-not needed for search agent
+    nextHist = []           #use goal test to know when to stop
+
+    for history in histories:
+      percept = history[-1]
+      action = actionPerc(percept) #actions aren't chosen in the search agent, we just try all of them
+      table[history] = action
+
+      for newPerc in nextPerc(percept, action):
+        nextHist.append(history + (newPerc,))
+
+    histories = nextHist    #not needed for search agent bc util.Queue() constructor builds empty queue
+
+
+  return table"""
+    #use queue, bfs, graph search, and goal test to know when to stop
+    frontier = util.Queue()
+    #push start state location and empty list of actions onto the queue
+    frontier.push((problem.getStartState(), []))
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
