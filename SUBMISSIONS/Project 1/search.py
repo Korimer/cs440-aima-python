@@ -169,38 +169,42 @@ def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
         node: str
         path: list[str]
         cost: float
-        def __init__(self, successor: tuple[str,str,float], parent: QueueItem | None) -> None:
-            base_node, base_action, base_cost = successor
+        def __init__(self, node: str, path: list[str], cost: float) -> None:
+            self.node = node
+            self.path = path
+            self.cost = cost
 
-            self.node = base_node
+        def createChild(self, successor: tuple[str,str,float]):
+            return QueueItem(
+                node = successor[0],
+                path = self.path + [successor[1]],
+                cost = self.cost + successor[2]
+            )
 
-            self.path = [base_action]
-            if parent is not None:
-                self.path = parent.path + self.path
-
-            self.cost = base_cost
-            if parent is not None:
-                self.cost = parent.cost + self.cost
-
-    # TODO: Maintain a queue of already-visited nodes/costs. Don't revisit old/more expensive nodes!
-    pqueue = util.PriorityQueue()
     start: str = problem.getStartState()
+    to_visit = util.PriorityQueue()
+    visited_nodes = { start }
+
     cur_node = start
-    last_queue_item: QueueItem | None = None
+    cur_queue_item: QueueItem = QueueItem(start, [], 0)
     while not problem.isGoalState(cur_node):
         adjacent_nodes: list[tuple[str,str,float]] = problem.getSuccessors(cur_node)
 
+        # Note all adjacent nodes
         for nodeinfo in adjacent_nodes:
-            qitem = QueueItem(nodeinfo, last_queue_item)
-            pqueue.update(qitem, qitem.cost)
+            qitem = cur_queue_item.createChild(nodeinfo)
+            to_visit.update(qitem, qitem.cost)
 
-        last_queue_item = pqueue.pop()
-        cur_node = last_queue_item.node
+        # Find the cheapest unvisited node to explore
+        potential_next_node = to_visit.pop()
+        while potential_next_node.node in visited_nodes:
+            potential_next_node = to_visit.pop()
 
-        #print(f"pos: {last_queue_item.node} - path - {last_queue_item.path} cost: {last_queue_item.cost}")
-        #_=input("")
+        cur_queue_item: QueueItem = potential_next_node
+        visited_nodes.add(cur_queue_item.node)
+        cur_node = cur_queue_item.node
 
-    return last_queue_item.path
+    return cur_queue_item.path
 
 def nullHeuristic(state, problem=None) -> float:
     """
