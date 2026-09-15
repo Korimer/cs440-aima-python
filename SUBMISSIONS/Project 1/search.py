@@ -151,8 +151,43 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Helper class for organizing the PriorityQueue
+    class QueueItem:
+        node: str
+        path: list[str]
+        cost: float
+        def __init__(self, successor: tuple[str,str,float], parent: QueueItem | None) -> None:
+            base_node, base_action, base_cost = successor
+
+            self.node = base_node
+
+            self.path = [base_action]
+            if parent is not None:
+                self.path = parent.path + self.path
+
+            self.cost = base_cost
+            if parent is not None:
+                self.cost = parent.cost + self.cost
+
+    # TODO: Maintain a queue of already-visited nodes/costs. Don't revisit old/more expensive nodes!
+    pqueue = util.PriorityQueue()
+    start: str = problem.getStartState()
+    cur_node = start
+    last_queue_item: QueueItem | None = None
+    while not problem.isGoalState(cur_node):
+        adjacent_nodes: list[tuple[str,str,float]] = problem.getSuccessors(cur_node)
+
+        for nodeinfo in adjacent_nodes:
+            qitem = QueueItem(nodeinfo, last_queue_item)
+            pqueue.update(qitem, qitem.cost)
+
+        last_queue_item = pqueue.pop()
+        cur_node = last_queue_item.node
+
+        #print(f"pos: {last_queue_item.node} - path - {last_queue_item.path} cost: {last_queue_item.cost}")
+        #_=input("")
+
+    return last_queue_item.path
 
 def nullHeuristic(state, problem=None) -> float:
     """
