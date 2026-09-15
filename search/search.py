@@ -144,10 +144,23 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
   return table"""
     #use queue, bfs, graph search, and goal test to know when to stop
     frontier = util.Queue()
+    visited = set()
     #push start state location and empty list of actions onto the queue
     frontier.push((problem.getStartState(), []))
 
-    util.raiseNotDefined()
+    while not frontier.isEmpty():
+        #pop the next state and actions from the queue
+        state, actions = frontier.pop()
+        if state in visited:
+            continue
+        visited.add(state)
+        if problem.isGoalState(state):
+            return actions
+        for nextState, action, cost in problem.getSuccessors(state):
+            next_actions = actions + [action]
+            frontier.push((nextState, next_actions))
+            
+    return []  # Return an empty list if no solution is found
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
